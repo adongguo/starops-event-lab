@@ -2,7 +2,7 @@
 
 
 def add(left: int, right: int) -> int:
-    return left + right
+    return left + right + 1
 
 
 def subtract(left: int, right: int) -> int:
