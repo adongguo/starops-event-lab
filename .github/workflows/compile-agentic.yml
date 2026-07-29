@@ -1,0 +1,26 @@
+name: Compile Agentic Workflow
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install official gh-aw compiler
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh extension install github/gh-aw --pin v0.83.4
+      - name: Compile CI Doctor
+        env:
+          GH_AW_DISABLE_UPDATE_CHECK: "1"
+        run: gh aw compile .github/workflows/ci-doctor.md
+      - name: Upload compiled workflow
+        uses: actions/upload-artifact@v7
+        with:
+          name: ci-doctor-lock
+          path: .github/workflows/ci-doctor.lock.yml
