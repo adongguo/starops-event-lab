@@ -1,0 +1,38 @@
+name: Lab Build and Deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  attestations: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build artifact
+        run: tar -czf starops-event-lab.tgz app tests
+      - name: Generate artifact attestation
+        uses: actions/attest@v4
+        with:
+          subject-path: starops-event-lab.tgz
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: starops-event-lab
+          path: starops-event-lab.tgz
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pre
+    steps:
+      - name: Confirm the environment secret is released
+        env:
+          PRE_DUMMY_SECRET: ${{ secrets.PRE_DUMMY_SECRET }}
+        run: test -n "$PRE_DUMMY_SECRET"
+      - name: Record synthetic deployment
+        run: echo "Synthetic deployment approved for pre"

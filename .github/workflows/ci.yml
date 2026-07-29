@@ -1,0 +1,31 @@
+name: Lab CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main]
+    paths:
+      - "app/**"
+      - "tests/**"
+      - "pyproject.toml"
+  workflow_dispatch:
+
+concurrency:
+  group: lab-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Hold the run open for concurrency testing
+        run: sleep 45
+      - name: Run unit tests
+        run: python -m unittest discover -s tests
