@@ -19,3 +19,5 @@ python3 -m unittest discover -s tests
 ```
 
 禁止在本仓库中提交公司代码、真实流水线日志、真实密钥或内部系统标识。
+
+此行仅用于验证 docs-only Pull Request 不触发 Lab CI。
